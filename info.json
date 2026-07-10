@@ -1,0 +1,11 @@
+{
+  "name": "ItemGiverGui2",
+  "version": "2.0.2",
+  "title": "Item Giver Gui 2.0",
+  "author": "coltonj96, krangpow, 0xDEADC0DE",
+  "contact": "",
+  "homepage": "",
+  "description": "Updated to Factorio 2.0 (Space Age) - A mod that adds a Gui that allows input of item names and amount to give/remove with auto complete when clicking on a suggested item.",
+  "factorio_version": "2.0",
+  "dependencies": ["base"]
+ }
