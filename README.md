@@ -9,7 +9,7 @@ Item Giver Gui adds a compact in-game window for finding items by prototype name
 - Open or close the GUI with **Shift + Enter**.
 - Search item prototype names with autocomplete suggestions.
 - Give a selected quantity of an item to the player.
-- Remove a selected quantity of an item from the player.
+- Remove a selected quantity of an item.
 - Filter by common item types.
 - Optionally show hidden prototypes.
 - Select the quality of inserted items.
@@ -119,6 +119,20 @@ python scripts/build_release.py
 ```
 
 The output is written to `dist/`.
+
+## Automatic Factorio Mod Portal publishing
+
+The same workflow can publish the generated ZIP directly to the Factorio Mod Portal.
+
+The repository must contain a GitHub Actions repository secret named `FACTORIO_API_KEY`. The value must be a Factorio API key with permission to upload mods.
+
+After the secret is configured:
+
+- Every successful push to `main` uploads the current version when it is not already present on the portal.
+- Existing portal versions are detected and skipped safely.
+- The workflow can also be started manually from **Actions → Build and release Factorio mod → Run workflow**.
+- Manual runs can publish the current version, including an existing GitHub release such as `3.0.0`.
+- The API key is read only from GitHub Secrets and is never stored in the repository or printed in the workflow logs.
 
 ## License
 
