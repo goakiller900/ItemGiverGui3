@@ -80,9 +80,9 @@ local function item_matches(cache, prototype_name, query)
   return false
 end
 
-local function add_match(matches, player, prototype, name, amount)
+local function add_match(matches, player, prototype, name, amount, selected_list)
   if (not prototype.hidden or show_hidden(player))
-    and isListed(list(player), prototype)
+    and isListed(selected_list, prototype)
   then
     table.insert(matches, {
       name = name,
@@ -142,6 +142,7 @@ function igg.update_gui(player, text, amnt)
 
   local matches = {}
   local proto = prototypes.item
+  local selected_list = list(player)
 
   if show_inventory(player) == true then
     if filter(player) then
@@ -150,7 +151,7 @@ function igg.update_gui(player, text, amnt)
           local prototype = proto[item.name]
 
           if prototype and item_matches(cache, item.name, query) then
-            add_match(matches, player, prototype, item.name, item.amount)
+            add_match(matches, player, prototype, item.name, item.amount, selected_list)
           end
         end
       end
@@ -177,7 +178,7 @@ function igg.update_gui(player, text, amnt)
       local prototype = proto[item_name]
 
       if prototype and item_matches(cache, item_name, query) then
-        add_match(matches, player, prototype, item_name, amount)
+        add_match(matches, player, prototype, item_name, amount, selected_list)
       end
     end
   end
