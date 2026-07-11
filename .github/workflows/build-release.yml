@@ -1,0 +1,105 @@
+name: Build and release Factorio mod
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: factorio-release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build Factorio archive
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Read mod metadata
+        id: metadata
+        shell: bash
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          from pathlib import Path
+
+          info = json.loads(Path("info.json").read_text(encoding="utf-8"))
+          name = info["name"]
+          version = info["version"]
+          title = info["title"]
+          archive = f"{name}_{version}.zip"
+
+          print(f"name={name}")
+          print(f"version={version}")
+          print(f"title={title}")
+          print(f"tag=v{version}")
+          print(f"archive={archive}")
+          print(f"checksum={archive}.sha256")
+          PY
+
+      - name: Validate and build release archive
+        run: python scripts/build_release.py
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.metadata.outputs.name }}_${{ steps.metadata.outputs.version }}
+          path: |
+            dist/${{ steps.metadata.outputs.archive }}
+            dist/${{ steps.metadata.outputs.checksum }}
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
+
+      - name: Create immutable GitHub release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MOD_TITLE: ${{ steps.metadata.outputs.title }}
+          VERSION: ${{ steps.metadata.outputs.version }}
+          TAG: ${{ steps.metadata.outputs.tag }}
+          ARCHIVE: dist/${{ steps.metadata.outputs.archive }}
+          CHECKSUM: dist/${{ steps.metadata.outputs.checksum }}
+        run: |
+          set -euo pipefail
+
+          git fetch --tags --force
+
+          if git rev-parse --verify --quiet "refs/tags/$TAG" >/dev/null; then
+            tag_sha="$(git rev-list -n 1 "$TAG")"
+
+            if [[ "$tag_sha" != "$GITHUB_SHA" ]]; then
+              echo "::error title=Version already released::$TAG points to $tag_sha, not $GITHUB_SHA. Increase the version in info.json before publishing another release."
+              exit 1
+            fi
+
+            if gh release view "$TAG" >/dev/null 2>&1; then
+              gh release upload "$TAG" "$ARCHIVE" "$CHECKSUM" --clobber
+            else
+              gh release create "$TAG" "$ARCHIVE" "$CHECKSUM" \
+                --verify-tag \
+                --title "$MOD_TITLE $VERSION" \
+                --generate-notes
+            fi
+          else
+            gh release create "$TAG" "$ARCHIVE" "$CHECKSUM" \
+              --target "$GITHUB_SHA" \
+              --title "$MOD_TITLE $VERSION" \
+              --generate-notes
+          fi
