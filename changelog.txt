@@ -7,6 +7,8 @@ Date: 11. 07. 2026
   Changes:
     - Fixed the default Shift+Enter shortcut for Factorio 2.1.
     - Added Shift+Numpad Enter as an alternative shortcut.
+    - Preserved the original and continuation author credits.
+    - Restored the original MIT license notice.
 ---------------------------------------------------------------------------------------------------
 Version: 2.0.2
 Date: 16. 11. 2024
