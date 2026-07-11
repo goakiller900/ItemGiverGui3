@@ -63,19 +63,8 @@ jobs:
       - name: Validate and build release archive
         run: python scripts/build_release.py
 
-      - name: Upload workflow artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ steps.metadata.outputs.name }}_${{ steps.metadata.outputs.version }}
-          path: |
-            dist/${{ steps.metadata.outputs.archive }}
-            dist/${{ steps.metadata.outputs.checksum }}
-          if-no-files-found: error
-          compression-level: 0
-          retention-days: 30
-
-      - name: Create or verify immutable GitHub release
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      - name: Create or prepare immutable GitHub release
+        if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch' }}
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
@@ -93,6 +82,7 @@ jobs:
             tag_sha="$(git rev-list -n 1 "$TAG")"
 
             if gh release view "$TAG" >/dev/null 2>&1; then
+              rm -rf /tmp/existing-release
               mkdir -p /tmp/existing-release
 
               if ! gh release download "$TAG" \
@@ -107,11 +97,14 @@ jobs:
               existing_digest="$(sha256sum "$existing_archive" | awk '{print $1}')"
 
               if [[ "$built_digest" != "$existing_digest" ]]; then
-                echo "::error title=Version already released::$TAG points to $tag_sha and its archive differs from this build. Increase the version in info.json before publishing changed mod contents."
-                exit 1
+                echo "::warning title=Using immutable release archive::The current repository tree differs from the existing $TAG archive. The existing release ZIP will be used for publication. Increase info.json version before releasing changed mod contents."
+              else
+                echo "Existing $TAG release contains the identical mod archive."
               fi
 
-              echo "Existing $TAG release contains the identical mod archive; leaving it unchanged."
+              cp "$existing_archive" "$ARCHIVE"
+              printf '%s  %s\n' "$existing_digest" "$(basename "$ARCHIVE")" > "$CHECKSUM"
+              echo "Prepared the immutable $TAG archive for downstream publication."
             elif [[ "$tag_sha" == "$GITHUB_SHA" ]]; then
               gh release create "$TAG" "$ARCHIVE" "$CHECKSUM" \
                 --verify-tag \
@@ -127,6 +120,17 @@ jobs:
               --title "$MOD_TITLE $VERSION" \
               --generate-notes
           fi
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.metadata.outputs.name }}_${{ steps.metadata.outputs.version }}
+          path: |
+            dist/${{ steps.metadata.outputs.archive }}
+            dist/${{ steps.metadata.outputs.checksum }}
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
 
       - name: Require API key for manual portal publication
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.publish_factorio_portal && env.FACTORIO_API_KEY == '' }}
@@ -145,21 +149,31 @@ jobs:
         run: |
           set -euo pipefail
 
-          portal_metadata="$(curl --fail-with-body --silent --show-error \
+          portal_metadata_file="$(mktemp)"
+          portal_status="$(curl --silent --show-error \
+            --output "$portal_metadata_file" \
+            --write-out '%{http_code}' \
             "https://mods.factorio.com/api/mods/$MOD_NAME")"
 
-          if PORTAL_METADATA="$portal_metadata" VERSION="$VERSION" python - <<'PY'
+          if [[ "$portal_status" == "200" ]]; then
+            if PORTAL_METADATA_FILE="$portal_metadata_file" VERSION="$VERSION" python - <<'PY'
           import json
           import os
+          from pathlib import Path
 
-          metadata = json.loads(os.environ["PORTAL_METADATA"])
+          metadata = json.loads(Path(os.environ["PORTAL_METADATA_FILE"]).read_text(encoding="utf-8"))
           version = os.environ["VERSION"]
           releases = metadata.get("releases", [])
           raise SystemExit(0 if any(release.get("version") == version for release in releases) else 1)
           PY
-          then
-            echo "Factorio Mod Portal already contains $MOD_NAME version $VERSION; skipping upload."
-            exit 0
+            then
+              echo "Factorio Mod Portal already contains $MOD_NAME version $VERSION; skipping upload."
+              exit 0
+            fi
+          elif [[ "$portal_status" != "404" ]]; then
+            echo "::error title=Portal lookup failed::Factorio Mod Portal returned HTTP $portal_status while checking $MOD_NAME."
+            cat "$portal_metadata_file"
+            exit 1
           fi
 
           init_response="$(curl --fail-with-body --silent --show-error \
