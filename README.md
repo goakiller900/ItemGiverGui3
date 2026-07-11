@@ -31,52 +31,64 @@ ItemGiverGui3_3.0.0/
 
 ## Project history and credits
 
-This continuation is built on work maintained by several people over the lifetime of the mod. Their credits are deliberately preserved.
+Item Giver Gui 3 exists because several community maintainers kept the original idea working across later Factorio releases. Their contributions and the original license are preserved here.
 
-### Original: ItemGiverGui
+### 1. Item Giver Gui — original mod
 
-- **Original author:** [coltonj96](https://github.com/coltonj96)
-- **Original source:** [coltonj96/ItemGiverGui](https://github.com/coltonj96/ItemGiverGui)
-- **Known original releases:** `0.0.1` through `0.0.8`
+- **Creator:** [coltonj96](https://github.com/coltonj96)
+- **Factorio Mod Portal:** [ItemGiverGui](https://mods.factorio.com/mod/ItemGiverGui)
+- **Source:** [coltonj96/ItemGiverGui](https://github.com/coltonj96/ItemGiverGui)
+- **Releases:** `0.0.1` through `0.0.8`
+- **Supported Factorio versions:** `0.14` through `0.16`
 - **License:** MIT, copyright © 2017 coltonj96
 
-The original repository's README only contained the project title, so the functional description in this README is based on the original source and `info.json` metadata.
+The original version introduced the GUI, item-image suggestions, item removal, inventory/filter/sort controls and the default **Shift + Enter** shortcut. Its GitHub README only contained the project title, so this README preserves and summarizes the fuller description and changelog published on the Factorio Mod Portal.
 
-### Factorio 0.17 community update
+### 2. Item Giver Gui (Fix) — Factorio 0.17 through 1.1
 
-- **Updater:** [DarkScorpion](https://github.com/DarkScorpion)
-- **Source:** [DarkScorpion/Item-giver-gui-factorio](https://github.com/DarkScorpion/Item-giver-gui-factorio)
+- **Maintainer:** [krangpow](https://mods.factorio.com/user/krangpow)
+- **Factorio Mod Portal:** [ItemGiverGuiFix](https://mods.factorio.com/mod/ItemGiverGuiFix)
+- **Releases:** `0.0.9` through `0.0.13`
+- **Supported Factorio versions:** `0.17` through `1.1`
+- **License:** MIT
 
-This was a manual community update of the original mod for Factorio 0.17. It retained coltonj96 as the original author.
+krangpow described this continuation as a bug-fix release of coltonj96's original mod and explicitly gave the original author full credit. The continuation updated the mod for Factorio `0.17`, `0.18` and `1.1`, fixed an inventory issue and changed the custom-input consuming mode to `game-only`.
 
-### Continuation: ItemGiverGui2
+### 3. Item Giver Gui 2.0 — Factorio 2.0 / Space Age
 
-The `ItemGiverGui2` version `2.0.2` source metadata credits:
+- **Portal owner and publisher:** [gslandtreter](https://mods.factorio.com/user/gslandtreter)
+- **Factorio Mod Portal:** [ItemGiverGui2](https://mods.factorio.com/mod/ItemGiverGui2)
+- **Releases:** `2.0.0` through `2.0.2`
+- **Supported Factorio version:** `2.0`
+- **License:** MIT
 
-- **coltonj96** — original creator
-- **krangpow** — continuation author/maintainer
-- **0xDEADC0DE** — continuation author/maintainer
+The portal page credits **coltonj96** and **krangpow** for the earlier work. The distributed `ItemGiverGui2` version `2.0.2` metadata also lists **0xDEADC0DE**, so that credit is preserved as well.
 
-Its included changelog records Factorio 2.0 / Space Age support in version `2.0.1` and the quality selector in version `2.0.2`. No public source repository or substantial README for this continuation was located during the July 2026 lineage review, so these credits are preserved directly from its distributed `info.json` metadata.
+The `2.0.x` continuation updated the mod for Factorio 2.0 / Space Age and added the quality selector in version `2.0.2`. No public source repository was linked from its portal page, so the available portal description, packaged metadata and included changelog are the sources used for this part of the lineage.
 
-### Current continuation: ItemGiverGui3
+### 4. Item Giver Gui 3 — Factorio 2.1
 
-- **Maintainer:** [goakiller900](https://github.com/goakiller900)
+- **Current maintainer:** [goakiller900](https://github.com/goakiller900)
 - **Source:** [goakiller900/ItemGiverGui3](https://github.com/goakiller900/ItemGiverGui3)
 
-ItemGiverGui3 updates the continuation for Factorio 2.1 while preserving the original concept, interface and prior maintainer credits.
+Item Giver Gui 3 updates the continuation for Factorio 2.1, corrects the Shift + Enter input declaration for the current API, and preserves the original concept, interface, license and prior contributor credits.
+
+### Other historical source
+
+A separate public Factorio 0.17 source update also exists at [DarkScorpion/Item-giver-gui-factorio](https://github.com/DarkScorpion/Item-giver-gui-factorio). It retains coltonj96 as the original author. It is documented here as useful historical source material, but it is not presented as the confirmed direct predecessor of the current continuation.
 
 This project is not an official release by the original author. If an earlier maintainer returns and wishes to resume maintenance, attribution, archival, redirection or transfer can be discussed through the repository issues.
 
 ## Automatic release packaging
 
-The repository includes a fully automated GitHub Actions release workflow.
+The repository includes a fully automatic GitHub Actions release workflow.
 
 - Every pull request and manual workflow run validates the mod and builds a correctly structured ZIP.
-- Every push to `main` builds the ZIP from the `name` and `version` fields in `info.json`.
-- When that version has not been released before, the workflow automatically creates the matching Git tag and GitHub Release.
-- The exact ready-to-use ZIP and a SHA-256 checksum are attached to the release.
-- If the version already belongs to an older commit, the workflow fails instead of silently replacing an existing release. Increase the version in `info.json` before publishing another release.
+- Every push to `main` reads the mod name and version directly from `info.json`.
+- The builder creates the required top-level folder automatically.
+- When the version has not been released before, the workflow creates the matching Git tag and GitHub Release automatically.
+- The ready-to-use ZIP and its SHA-256 checksum are attached to the release.
+- Existing releases are treated as immutable. Increase the version in `info.json` before publishing changed mod contents under a new release.
 
 For version `3.0.0`, the generated file is:
 
@@ -84,7 +96,23 @@ For version `3.0.0`, the generated file is:
 ItemGiverGui3_3.0.0.zip
 ```
 
-You can also build the same archive locally:
+The ZIP contains:
+
+```text
+ItemGiverGui3_3.0.0/
+├── info.json
+├── control.lua
+├── data.lua
+├── changelog.txt
+├── locale/
+├── prototypes/
+├── README.md
+└── LICENSE
+```
+
+Repository-only files such as `.git`, `.github`, `scripts` and `dist` are excluded automatically.
+
+You can build the same archive locally with:
 
 ```bash
 python scripts/build_release.py
@@ -94,4 +122,4 @@ The output is written to `dist/`.
 
 ## License
 
-The original project was released under the MIT License. The original copyright and license notice are retained in [LICENSE](LICENSE).
+The original project was released under the MIT License. The original copyright and permission notice are retained in [LICENSE](LICENSE), as required by that license.
