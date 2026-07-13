@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+      - testing-3.0.1
   workflow_dispatch:
     inputs:
       publish_factorio_portal:
@@ -64,7 +65,7 @@ jobs:
         run: python scripts/build_release.py
 
       - name: Create or prepare immutable GitHub release
-        if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch' }}
+        if: ${{ github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') }}
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
@@ -133,14 +134,14 @@ jobs:
           retention-days: 30
 
       - name: Require API key for manual portal publication
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.publish_factorio_portal && env.FACTORIO_API_KEY == '' }}
+        if: ${{ github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch' && inputs.publish_factorio_portal && env.FACTORIO_API_KEY == '' }}
         shell: bash
         run: |
           echo "::error title=Missing FACTORIO_API_KEY::Add the Factorio Mod Portal API key as a GitHub Actions repository secret named FACTORIO_API_KEY."
           exit 1
 
       - name: Publish to Factorio Mod Portal
-        if: ${{ ((github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'workflow_dispatch' && inputs.publish_factorio_portal)) && env.FACTORIO_API_KEY != '' }}
+        if: ${{ github.ref == 'refs/heads/main' && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.publish_factorio_portal)) && env.FACTORIO_API_KEY != '' }}
         shell: bash
         env:
           MOD_NAME: ${{ steps.metadata.outputs.name }}
