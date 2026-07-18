@@ -43,6 +43,8 @@ Version `3.0.2` adds interface localisation for 20 high-reach languages supporte
 - Dutch
 - Traditional Chinese
 
+The non-English translations were AI-assisted and then spot-checked in-game before release. Native-speaker corrections and improvements are welcome through the project issue tracker.
+
 The GUI labels, buttons, item categories, validation messages, success messages, beta setting and testing tooltips are localised. The quality selector also uses Factorio's own translated quality names.
 
 Item names shown by the expanded-search beta continue to use Factorio's own localisation system and the localisation supplied by other installed mods.
