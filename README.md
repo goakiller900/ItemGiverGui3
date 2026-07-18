@@ -145,17 +145,27 @@ The output is written to `dist/`.
 
 ## Automatic Factorio Mod Portal publishing
 
-The same workflow can publish the generated ZIP directly to the Factorio Mod Portal.
+The release workflow is prepared to publish new versions directly to the Factorio Mod Portal.
 
-The repository must contain a GitHub Actions repository secret named `FACTORIO_API_KEY`. The value must be a Factorio API key with permission to upload mods.
+Automatic portal publishing is intentionally restricted to the `main` branch. Pushes to development or testing branches, including `testing-3.0.1`, only build and validate the mod and never publish a release to the portal.
+
+To enable automatic publishing:
+
+1. Create a Factorio API key with the **ModPortal: Upload Mods** permission.
+2. In the GitHub repository, open **Settings → Secrets and variables → Actions**.
+3. Create a repository secret named exactly `FACTORIO_API_KEY`.
+4. Store the Factorio API key as the secret value.
 
 After the secret is configured:
 
-- Every successful push to `main` uploads the current version when it is not already present on the portal.
-- Existing portal versions are detected and skipped safely.
+- Every successful push to `main` builds the ZIP and creates or reuses the matching immutable GitHub Release.
+- The same release ZIP is uploaded automatically to the Factorio Mod Portal when that version is not already present.
+- Existing portal versions are detected and skipped safely rather than uploaded again.
 - The workflow can also be started manually from **Actions → Build and release Factorio mod → Run workflow**.
-- Manual runs can publish the current version, including an existing GitHub release such as `3.0.1`.
+- Manual runs on `main` can publish the current version when **Publish this version to the Factorio Mod Portal** is enabled.
 - The API key is read only from GitHub Secrets and is never stored in the repository or printed in the workflow logs.
+
+Until `FACTORIO_API_KEY` is added, normal builds and GitHub release packaging continue to work; only the Mod Portal upload step is skipped.
 
 ## License
 
