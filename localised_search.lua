@@ -1,10 +1,15 @@
--- Proof of concept: search by both internal prototype name and the
--- translated item name shown to the current player.
---
--- This module is intentionally isolated from the original control.lua so the
--- experiment can be reviewed or removed without rewriting the existing code.
+-- Optional beta search by both internal prototype name and the translated item
+-- name shown to the current player. The original search implementation remains
+-- untouched and is used whenever the per-player beta setting is disabled.
 
+local SETTING_NAME = "igg-expanded-search"
 local CACHE_KEY = "igg_localised_item_search"
+
+local function expanded_search_enabled(player)
+  local player_settings = settings.get_player_settings(player)
+  local setting = player_settings[SETTING_NAME]
+  return setting and setting.value == true
+end
 
 local function get_caches()
   storage[CACHE_KEY] = storage[CACHE_KEY] or {}
@@ -92,15 +97,17 @@ local function add_match(matches, player, prototype, name, amount, selected_list
 end
 
 local original_open_gui = igg.open_gui
+local original_update_gui = igg.update_gui
 
 function igg.open_gui(player)
-  ensure_translation_cache(player)
+  if expanded_search_enabled(player) then
+    ensure_translation_cache(player)
+  end
+
   original_open_gui(player)
 end
 
--- Keep the icon button behaviour, but make it obvious that a translated result
--- still selects the stable internal prototype name.
-function image(item_name, amount)
+local function expanded_image(item_name, amount)
   if not amount then amount = 0 end
 
   local item = prototypes.item[item_name]
@@ -119,9 +126,7 @@ function image(item_name, amount)
   }
 end
 
--- Replacement for the original search renderer. The filters and result buttons
--- stay the same; only the matching logic also checks the translated item name.
-function igg.update_gui(player, text, amnt)
+local function expanded_update_gui(player, text, amnt)
   try_init()
   local cache = ensure_translation_cache(player)
 
@@ -220,8 +225,16 @@ function igg.update_gui(player, text, amnt)
   })
 
   for _, match in pairs(matches) do
-    tab.add(image(match.name, match.amount))
+    tab.add(expanded_image(match.name, match.amount))
   end
+end
+
+function igg.update_gui(player, text, amnt)
+  if not expanded_search_enabled(player) then
+    return original_update_gui(player, text, amnt)
+  end
+
+  return expanded_update_gui(player, text, amnt)
 end
 
 script.on_event(defines.events.on_string_translated, function(event)
@@ -232,7 +245,8 @@ script.on_event(defines.events.on_string_translated, function(event)
 
   local prototype_name = cache.pending[event.id]
   if not prototype_name then
-    -- This can be an old request from before the player changed locale.
+    -- This can be an old request from before the player changed locale or
+    -- disabled and re-enabled the beta setting.
     return
   end
 
@@ -247,9 +261,30 @@ script.on_event(defines.events.on_string_translated, function(event)
     cache.ready = true
 
     local player = game.players[event.player_index]
-    if player and igg.gui_is_open(player) then
+    if player and expanded_search_enabled(player) and igg.gui_is_open(player) then
       igg.update_gui(player)
     end
+  end
+end)
+
+script.on_event(defines.events.on_runtime_mod_setting_changed, function(event)
+  if event.setting ~= SETTING_NAME or not event.player_index then
+    return
+  end
+
+  local player = game.players[event.player_index]
+  if not player then
+    return
+  end
+
+  if expanded_search_enabled(player) then
+    start_translation_cache(player)
+  else
+    get_caches()[event.player_index] = nil
+  end
+
+  if igg.gui_is_open(player) then
+    igg.update_gui(player)
   end
 end)
 
@@ -257,7 +292,7 @@ script.on_event(defines.events.on_player_locale_changed, function(event)
   get_caches()[event.player_index] = nil
 
   local player = game.players[event.player_index]
-  if player then
+  if player and expanded_search_enabled(player) then
     ensure_translation_cache(player)
 
     if igg.gui_is_open(player) then
