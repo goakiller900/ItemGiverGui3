@@ -1,11 +1,11 @@
 {
   "name": "ItemGiverGui3",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "title": "Item Giver Gui 3.0",
   "author": "coltonj96, krangpow, gslandtreter, 0xDEADC0DE, goakiller900",
   "contact": "https://github.com/goakiller900/ItemGiverGui3/issues",
   "homepage": "https://github.com/goakiller900/ItemGiverGui3",
-  "description": "Unofficial community continuation updated for Factorio 2.1. Adds a GUI for giving or removing items with autocomplete suggestions and quality selection.",
+  "description": "Unofficial community continuation updated for Factorio 2.1. Adds a GUI for giving or removing items with autocomplete suggestions, quality selection and multilingual interface localisation.",
   "factorio_version": "2.1",
   "dependencies": ["base"]
 }

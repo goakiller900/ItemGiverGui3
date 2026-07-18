@@ -6,6 +6,7 @@ on:
     branches:
       - main
       - testing-3.0.1
+      - testing-3.0.2
   workflow_dispatch:
     inputs:
       publish_factorio_portal:

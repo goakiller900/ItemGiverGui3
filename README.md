@@ -2,7 +2,7 @@
 
 Unofficial community-maintained continuation of **Item Giver Gui** for **Factorio 2.1**.
 
-Item Giver Gui adds a compact in-game window for finding items by prototype name and giving them to, or removing them from, the current player inventory. The current continuation also supports item quality selection and includes an optional beta search mode for translated item names.
+Item Giver Gui adds a compact in-game window for finding items and giving them to, or removing them from, the current player inventory. The current continuation supports item quality selection, an optional beta search mode for translated item names, and a multilingual interface.
 
 ## Features
 
@@ -14,12 +14,44 @@ Item Giver Gui adds a compact in-game window for finding items by prototype name
 - Filter by common item types.
 - Optionally show hidden prototypes.
 - Select the quality of inserted items.
+- Multilingual GUI, settings and player-facing messages.
 
 The shortcut can be changed in **Settings → Controls → Mods → Toggle Giver Gui**.
 
+## Localisation
+
+Version `3.0.2` adds interface localisation for 20 high-reach languages supported by Factorio:
+
+- English
+- Simplified Chinese
+- Spanish
+- French
+- Arabic
+- Brazilian Portuguese
+- Russian
+- Indonesian
+- German
+- Japanese
+- Vietnamese
+- Turkish
+- Korean
+- Persian
+- Italian
+- Thai
+- Polish
+- Ukrainian
+- Dutch
+- Traditional Chinese
+
+The non-English translations were AI-assisted and then spot-checked in-game before release. Native-speaker corrections and improvements are welcome through the project issue tracker.
+
+The GUI labels, buttons, item categories, validation messages, success messages, beta setting and testing tooltips are localised. The quality selector also uses Factorio's own translated quality names.
+
+Item names shown by the expanded-search beta continue to use Factorio's own localisation system and the localisation supplied by other installed mods.
+
 ## Expanded item search (Beta)
 
-Version `3.0.1` includes an optional expanded search mode for community testing. It is **disabled by default**, so the normal prototype-name search remains the standard behavior unless a player explicitly enables the beta.
+Version `3.0.1` introduced an optional expanded search mode for community testing. It is **disabled by default**, so the normal prototype-name search remains the standard behavior unless a player explicitly enables the beta.
 
 Enable it in:
 
@@ -38,15 +70,21 @@ This feature is currently provided as a beta so players can test it with differe
 
 ## Installation
 
-1. Download `ItemGiverGui3_3.0.1.zip` from the GitHub Releases page or the Factorio Mod Portal.
+1. Download the current `ItemGiverGui3_<version>.zip` from the GitHub Releases page or the Factorio Mod Portal.
 2. Place the ZIP file in your Factorio `mods` directory.
 3. Do not extract the ZIP.
 4. Enable **Item Giver Gui 3** in Factorio's Mods menu.
 
-The release archive contains the required top-level directory:
+For version `3.0.2`, the archive is:
 
 ```text
-ItemGiverGui3_3.0.1/
+ItemGiverGui3_3.0.2.zip
+```
+
+and contains the required top-level directory:
+
+```text
+ItemGiverGui3_3.0.2/
 ```
 
 ## Project history and credits
@@ -62,7 +100,7 @@ Item Giver Gui 3 exists because several community maintainers kept the original 
 - **Supported Factorio versions:** `0.14` through `0.16`
 - **License:** MIT, copyright © 2017 coltonj96
 
-The original version introduced the GUI, item-image suggestions, item removal, inventory/filter/sort controls and the default **Shift + Enter** shortcut. Its GitHub README only contained the project title, so this README preserves and summarizes the fuller description and changelog published on the Factorio Mod Portal.
+The original version introduced the GUI, item-image suggestions, item removal, inventory/filter/sort controls and the default **Shift + Enter** shortcut.
 
 ### 2. Item Giver Gui (Fix) — Factorio 0.17 through 1.1
 
@@ -72,7 +110,7 @@ The original version introduced the GUI, item-image suggestions, item removal, i
 - **Supported Factorio versions:** `0.17` through `1.1`
 - **License:** MIT
 
-krangpow described this continuation as a bug-fix release of coltonj96's original mod and explicitly gave the original author full credit. The continuation updated the mod for Factorio `0.17`, `0.18` and `1.1`, fixed an inventory issue and changed the custom-input consuming mode to `game-only`.
+This continuation updated and fixed the original mod for newer Factorio versions while explicitly preserving credit to coltonj96.
 
 ### 3. Item Giver Gui 2.0 — Factorio 2.0 / Space Age
 
@@ -82,16 +120,14 @@ krangpow described this continuation as a bug-fix release of coltonj96's origina
 - **Supported Factorio version:** `2.0`
 - **License:** MIT
 
-The portal page credits **coltonj96** and **krangpow** for the earlier work. The distributed `ItemGiverGui2` version `2.0.2` metadata also lists **0xDEADC0DE**, so that credit is preserved as well.
-
-The `2.0.x` continuation updated the mod for Factorio 2.0 / Space Age and added the quality selector in version `2.0.2`. No public source repository was linked from its portal page, so the available portal description, packaged metadata and included changelog are the sources used for this part of the lineage.
+The `2.0.x` continuation updated the mod for Factorio 2.0 / Space Age and added the quality selector in version `2.0.2`. The distributed metadata also lists **0xDEADC0DE**, so that credit is preserved as well.
 
 ### 4. Item Giver Gui 3 — Factorio 2.1
 
 - **Current maintainer:** [goakiller900](https://github.com/goakiller900)
 - **Source:** [goakiller900/ItemGiverGui3](https://github.com/goakiller900/ItemGiverGui3)
 
-Item Giver Gui 3 updates the continuation for Factorio 2.1, corrects the Shift + Enter input declaration for the current API, preserves the original concept, interface, license and prior contributor credits, and includes an optional beta expanded search mode for translated item names.
+Item Giver Gui 3 updates the continuation for Factorio 2.1, corrects the Shift + Enter input declaration for the current API, preserves the original concept, interface, license and prior contributor credits, and continues development with optional expanded search and interface localisation.
 
 ### Other historical source
 
@@ -101,39 +137,16 @@ This project is not an official release by the original author. If an earlier ma
 
 ## Automatic release packaging
 
-The repository includes a fully automatic GitHub Actions release workflow.
+The repository includes an automatic GitHub Actions release workflow.
 
-- Every pull request and manual workflow run validates the mod and builds a correctly structured ZIP.
+- Pull requests and testing workflows validate the mod and build a correctly structured ZIP.
 - Every push to `main` reads the mod name and version directly from `info.json`.
 - The builder creates the required top-level folder automatically.
 - When the version has not been released before, the workflow creates the matching Git tag and GitHub Release automatically.
-- The ready-to-use ZIP and its SHA-256 checksum are attached to the release.
+- The ready-to-use ZIP and its SHA-256 checksum are published directly as downloadable files.
 - Existing releases are treated as immutable. Increase the version in `info.json` before publishing changed mod contents under a new release.
 
-For version `3.0.1`, the generated file is:
-
-```text
-ItemGiverGui3_3.0.1.zip
-```
-
-The ZIP contains:
-
-```text
-ItemGiverGui3_3.0.1/
-├── info.json
-├── settings.lua
-├── control.lua
-├── control_original.lua
-├── localised_search.lua
-├── data.lua
-├── changelog.txt
-├── locale/
-├── prototypes/
-├── README.md
-└── LICENSE
-```
-
-Repository-only files such as `.git`, `.github`, `scripts` and `dist` are excluded automatically.
+The ZIP contains the mod files, including the localisation folders, while repository-only files such as `.git`, `.github`, `scripts` and `dist` are excluded automatically.
 
 You can build the same archive locally with:
 
@@ -147,14 +160,15 @@ The output is written to `dist/`.
 
 The release workflow is prepared to publish new versions directly to the Factorio Mod Portal.
 
-Automatic portal publishing is intentionally restricted to the `main` branch. Pushes to development or testing branches, including `testing-3.0.1`, only build and validate the mod and never publish a release to the portal.
+Automatic portal publishing is restricted to the `main` branch. Development and testing branches only build and validate the mod and never publish a portal release.
 
-To enable automatic publishing:
+The repository secret must be named exactly:
 
-1. Create a Factorio API key with the **ModPortal: Upload Mods** permission.
-2. In the GitHub repository, open **Settings → Secrets and variables → Actions**.
-3. Create a repository secret named exactly `FACTORIO_API_KEY`.
-4. Store the Factorio API key as the secret value.
+```text
+FACTORIO_API_KEY
+```
+
+The Factorio API key requires permission to upload mods.
 
 After the secret is configured:
 
@@ -162,10 +176,7 @@ After the secret is configured:
 - The same release ZIP is uploaded automatically to the Factorio Mod Portal when that version is not already present.
 - Existing portal versions are detected and skipped safely rather than uploaded again.
 - The workflow can also be started manually from **Actions → Build and release Factorio mod → Run workflow**.
-- Manual runs on `main` can publish the current version when **Publish this version to the Factorio Mod Portal** is enabled.
-- The API key is read only from GitHub Secrets and is never stored in the repository or printed in the workflow logs.
-
-Until `FACTORIO_API_KEY` is added, normal builds and GitHub release packaging continue to work; only the Mod Portal upload step is skipped.
+- The API key is read only from GitHub Secrets and is never stored in the repository or printed in workflow logs.
 
 ## License
 
