@@ -2,9 +2,20 @@
 -- duplicating the expanded search implementation itself.
 
 local update_gui_with_expanded_search = igg.update_gui
+local SETTING_NAME = "igg-expanded-search"
+
+local function expanded_search_enabled(player)
+  local player_settings = settings.get_player_settings(player)
+  local setting = player_settings[SETTING_NAME]
+  return setting and setting.value == true
+end
 
 function igg.update_gui(player, text, amnt)
   local result = update_gui_with_expanded_search(player, text, amnt)
+
+  if not expanded_search_enabled(player) then
+    return result
+  end
 
   local flow = igg:get_gui(player.gui.center, "igg_cmd_flow")
   if not flow or not flow.igg_cmd_suggest then
