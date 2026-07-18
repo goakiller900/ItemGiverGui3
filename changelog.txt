@@ -1,4 +1,15 @@
 ---------------------------------------------------------------------------------------------------
+Version: 3.0.2
+Date: 19. 07. 2026
+  Major Features:
+    - Added multilingual localisation for the Item Giver Gui interface.
+  Changes:
+    - Added GUI translations for 20 high-reach Factorio-supported languages.
+    - Localised buttons, labels, item categories, validation messages, success messages and beta-search tooltip details.
+    - Localised the Expanded item search (Beta) setting in all included languages.
+    - Item quality names now use Factorio's own translated quality names in the quality selector.
+    - Added translated control names for the Item Giver Gui shortcut where provided by the new language packs.
+---------------------------------------------------------------------------------------------------
 Version: 3.0.1
 Date: 19. 07. 2026
   Changes:
