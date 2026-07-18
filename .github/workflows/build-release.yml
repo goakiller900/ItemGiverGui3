@@ -122,15 +122,20 @@ jobs:
               --generate-notes
           fi
 
-      - name: Upload workflow artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload ready-to-use Factorio mod
+        uses: actions/upload-artifact@v7
         with:
-          name: ${{ steps.metadata.outputs.name }}_${{ steps.metadata.outputs.version }}
-          path: |
-            dist/${{ steps.metadata.outputs.archive }}
-            dist/${{ steps.metadata.outputs.checksum }}
+          path: dist/${{ steps.metadata.outputs.archive }}
           if-no-files-found: error
-          compression-level: 0
+          archive: false
+          retention-days: 30
+
+      - name: Upload checksum
+        uses: actions/upload-artifact@v7
+        with:
+          path: dist/${{ steps.metadata.outputs.checksum }}
+          if-no-files-found: error
+          archive: false
           retention-days: 30
 
       - name: Require API key for manual portal publication
