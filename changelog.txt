@@ -1,10 +1,12 @@
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.1
-Date: 13. 07. 2026
+Date: 19. 07. 2026
   Changes:
-    - Added experimental searching by translated item names while retaining prototype-name search.
-    - Sorted matching results by translated item name when available.
-    - Added the internal prototype name to item tooltips for testing and troubleshooting.
+    - Added the optional "Expanded item search (Beta)" per-player mod setting for community testing.
+    - The beta search is disabled by default and can be enabled or disabled at runtime without restarting the game.
+    - When enabled, item search matches both internal prototype names and translated item names.
+    - Beta search matching is case-insensitive, can sort results by translated item name, and shows the internal prototype name in item tooltips for testing and troubleshooting.
+    - When the beta option is disabled, the original prototype-name search implementation is used unchanged.
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.0
 Date: 11. 07. 2026
